@@ -1,5 +1,11 @@
 package com.epam.mjc;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class MethodParser {
 
     /**
@@ -20,6 +26,43 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+
+
+        Collection<String> delimiters = new ArrayList<>();
+        delimiters.add(" ");
+        delimiters.add("(");
+        delimiters.add(")");
+        delimiters.add(",");
+
+        List<String> modifier = new ArrayList<>();
+        modifier.add("public");
+        modifier.add("protected");
+        modifier.add("default");
+        modifier.add("private");
+
+        List<String> stringSplitter = new ArrayList<>();
+        stringSplitter.add(signatureString);
+        List<MethodSignature.Argument> arguments = new ArrayList<>();
+
+//        MethodSignature.Argument kaka = new MethodSignature.Argument();
+
+        StringSplitter spliter = new StringSplitter();
+        List<String>splittedString = spliter.splitByDelimiters(signatureString, delimiters);
+        if(!modifier.contains(splittedString.get(0))){
+            splittedString.add(0, null);
+        }
+        if(splittedString.size()>3){
+            for(int i = 3; i< splittedString.size(); i = i+2 ){
+                arguments.add(new MethodSignature.Argument(splittedString.get(i), splittedString.get(i+1)));
+            }
+        }
+
+        MethodSignature members = new MethodSignature(signatureString, arguments);
+
+        members.setAccessModifier(splittedString.get(0));
+        members.setReturnType(splittedString.get(1));
+        members.setMethodName(splittedString.get(2));
+
+        return members;
     }
 }
